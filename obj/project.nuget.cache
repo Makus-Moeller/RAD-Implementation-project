@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "vdHAxVqQOYC1Ev4SN1QO0kF3HQmWMz+Jwt4pWTmFwZWkPYiURHZyiLLMVyxzSQSSdsptR/HmJrSMLPW8i1ZGZQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Markus\\.nuget\\packages\\fsharp.core\\6.0.4\\fsharp.core.6.0.4.nupkg.sha512"
+  ],
+  "logs": []
+}

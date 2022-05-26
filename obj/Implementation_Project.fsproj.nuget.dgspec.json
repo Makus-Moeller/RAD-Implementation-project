@@ -1,0 +1,64 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+        "projectName": "Implementation_Project",
+        "projectPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+        "packagesPath": "C:\\Users\\Markus\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Markus\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\sdk\\6.0.300\\FSharp\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[6.0.4, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
