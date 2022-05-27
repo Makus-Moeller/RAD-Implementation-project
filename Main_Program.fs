@@ -9,7 +9,10 @@ let rand_numb_bigint: bigint list = [
     320523630964915694060580I
 ] 
 
-
+let rand_64: uint64 list = [
+    13146228726924412240UL
+    3325534366338438573UL
+]
 //Assignment 1 a
 let multiply_shift_hashing (x:uint64) (a:uint64) (l: int) : uint64 = 
     (a*x) >>> (64-l)
@@ -19,25 +22,65 @@ let hashvalue = multiply_shift_hashing 34921UL 64244UL 35
 
 //Assignment 1 b
 
-let  multiply_mod_prime (a: bigint) (b: bigint) (x:uint64) (l: int32) : bigint = 
+let  multiply_mod_prime (a: bigint) (b: bigint) (x:uint64) (l: int32) : uint64 = 
     if a >= prime_p || b >= prime_p then raise(InnerError("To LARGE A or B")) 
     else
         let z : bigint = (a*bigint x + b)  //Big multiplication
-        printfn "z value: %A" z
         let y = (z&&&prime_p) + (z>>>89)
         let power_l = bigint 1<<<l
-        printfn "y value: %A" y
         if y >= prime_p then  
-            (y-prime_p) % power_l //Jeg har ændret denne shift
+            uint64((y-prime_p) % power_l) //Jeg har ændret denne shift
         else 
-            y % power_l
+            uint64(y % power_l)
 
-
+let createStream ( n : int ) ( l : int ) : seq < uint64 * int > =
+    seq {
+        // We generate a random uint64 number .
+        let rnd = System.Random ()
+        let mutable a = 0UL
+        let b : byte [] = Array.zeroCreate 8
+        rnd.NextBytes (b)
+        let mutable x : uint64 = 0UL
+        for i = 0 to 7 do
+        a <- (a<<<8) + uint64(b.[ i ])
+        // We demand that our random number has 30 zeros on the least
+        // significant bits and then a one.
+        a <- (a|||((1UL<<<31) - 1UL))^^^((1UL<<<30)- 1UL)
+        let mutable x = 0UL
+        for i = 1 to (n/3) do
+            x <- x + a
+            yield (x&&&(((1UL<<<l) - 1UL)<<<30),1)
+        for i = 1 to ((n + 1)/3) do
+            x <- x + a
+            yield (x&&&(((1UL<<<l)-1UL)<<<30),-1)
+        for i = 1 to (n + 2) /3 do
+            x <- x + a
+            yield (x&&&(((1UL<<<l)-1UL)<<<30),1)
+}
 [<EntryPoint>]
 let main argv =       
     let a : bigint = 349214000000073I
     let b : bigint = 560000000867I
+    
+
     let hashvalue2 = multiply_mod_prime a b 403232UL 11
+    let seq = createStream 1000
+    
+    
+    let stopWatch1 = System.Diagnostics.Stopwatch.StartNew()
+    let mutable sum:uint64 = 0UL
+    for i in seq do
+        let temp = multiply_mod_prime rand_numb_bigint.[0] rand_numb_bigint.[1] (fst i) 32
+        sum <- sum + temp
+    stopWatch1.Stop()
+    printfn "multiply_mod_prime: %f MS" stopWatch1.Elapsed.TotalMilliseconds
+    let stopWatch2 = System.Diagnostics.Stopwatch.StartNew()
+    let mutable sum_shift = 0UL
+    for i in seq do
+        let temp = multiply_shift_hashing (fst i) rand_64.[0] 32
+        sum_shift <-sum_shift + temp
+    stopWatch2.Stop()
+    printfn "hashshift: %f MS" stopWatch2.Elapsed.TotalMilliseconds
     0
 
 
