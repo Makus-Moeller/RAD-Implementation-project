@@ -4,6 +4,7 @@ exception InnerError of string
 open System.Linq
 open System
 type Hash_Table = array<list<uint64*int>>
+type KEYPAIR = uint64*int
 let prime_p : bigint = (bigint 2<<<89)-bigint 1
 let rand_numb_bigint: bigint list = [
     961026785849338145764820I
@@ -57,23 +58,61 @@ let createStream (n:int) (l:int) : seq<uint64*int> =
             yield (x&&&(((1UL<<<l)-1UL)<<<30),1)
 }
 
-
+let calculate_l (table_Length:int) : int = 
+    let mutable l = 0
+    let mutable length = table_Length
+    while length <> 1 do
+        length <- (length>>>1)
+        l <- l + 1
+    l
+    
 //Assignment 1 a
 let multiply_shift_hashing (x:uint64) (a:uint64) (l: int) : int32 = 
     int32 ((a*x) >>> (64-l))
 
 //hashtablecreator
-let create_hashtable (length: int) : Hash_Table = 
-    printfn "leftshift %i" (1<<<length)
-    Array.create (1<<<length) List.Empty
+let create_hashtable (l: int) : Hash_Table = 
+    Array.create (1<<<l) List.Empty
+
+let set (key_pair : KEYPAIR) (table: Hash_Table): unit =
+    //Calculate L so the input isnt nessecary
+    let mutable l = calculate_l table.Length
+    let x_hash = multiply_shift_hashing (fst key_pair) rand_64.[1] l
+    let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
+    if index <> -1 then
+        table.[x_hash] <- key_pair :: List.filter (fun x -> x <>(table.[x_hash].[index])) table.[x_hash]
+        ()
+    else
+        table.[x_hash] <-key_pair :: table.[x_hash]
+
+
+let increment (key_pair : KEYPAIR) (table: Hash_Table): unit =
+    //Calculate L so the input isnt nessecary
+    let mutable l = calculate_l table.Length
+    
+    let x_hash = multiply_shift_hashing (fst key_pair) rand_64.[1] l
+
+    let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
+    if index <> -1 then
+        let new_val = snd table.[x_hash].[index] + snd key_pair
+        let x = fst table.[x_hash].[index]
+        table.[x_hash] <- (x, new_val) :: List.filter (fun x -> x <>(table.[x_hash].[index])) table.[x_hash]
+        ()
+    else
+        table.[x_hash] <-key_pair :: table.[x_hash]
+    
+
 
 let get(x:uint64) (table : Hash_Table) : int= 
-    let x_hash = multiply_shift_hashing x rand_64.[0] (4)
-    printfn("%i,  %i") table.Length x_hash
+    //Calculate L so the input isnt nessecary
+    let mutable l = calculate_l table.Length
+    //Get hash value and find
+    let x_hash = multiply_shift_hashing x rand_64.[1] l
     try 
         List.find (fun y -> fst y = x) table.[x_hash] |> snd
     with 
         | :? System.Collections.Generic.KeyNotFoundException -> 0
+
 
 [<EntryPoint>]
 let main argv =       
@@ -85,12 +124,22 @@ let main argv =
     let seq = createStream 1000 20
     
     let h_table = create_hashtable 4
-    h_table.[0] <- (100000UL, -1) :: h_table.[0]
-    printfn "%A" h_table.[0]
+
+    h_table.[12] <- (100000UL, -1) :: h_table.[12]
+    set (1000UL, -1) h_table
+    set (1000UL, -1) h_table
+    set (1000UL, -1) h_table
+    set (1000UL, -2) h_table
+
+    get 1000UL h_table |> printfn "set: %i" 
     
+    increment (1000UL, -1) h_table
+    increment (1000UL, -1) h_table
+    increment (1000UL, -1) h_table
+    increment (1000UL, -1) h_table
+
+    get 1000UL h_table |> printfn "increment: %i"
     
-    
-    printfn "%i" (get 100000UL h_table)
     
     let stopWatch1 = System.Diagnostics.Stopwatch.StartNew()
     let mutable sum:uint64 = 0UL
