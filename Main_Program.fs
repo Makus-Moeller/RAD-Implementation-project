@@ -78,28 +78,26 @@ let set (key_pair : KEYPAIR) (table: Hash_Table): unit =
     //Calculate L so the input isnt nessecary
     let mutable l = calculate_l table.Length
     let x_hash = multiply_shift_hashing (fst key_pair) rand_64.[1] l
-    let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
-    if index <> -1 then
+    try
+        let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
         table.[x_hash] <- key_pair :: List.filter (fun x -> x <>(table.[x_hash].[index])) table.[x_hash]
         ()
-    else
-        table.[x_hash] <-key_pair :: table.[x_hash]
+    with
+        | :? System.Collections.Generic.KeyNotFoundException ->  table.[x_hash] <-key_pair :: table.[x_hash]
 
 
 let increment (key_pair : KEYPAIR) (table: Hash_Table): unit =
     //Calculate L so the input isnt nessecary
     let mutable l = calculate_l table.Length
-    
     let x_hash = multiply_shift_hashing (fst key_pair) rand_64.[1] l
-
-    let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
-    if index <> -1 then
+    try
+        let index = List.findIndex (fun y -> fst y = fst key_pair) table.[x_hash]
         let new_val = snd table.[x_hash].[index] + snd key_pair
         let x = fst table.[x_hash].[index]
         table.[x_hash] <- (x, new_val) :: List.filter (fun x -> x <>(table.[x_hash].[index])) table.[x_hash]
         ()
-    else
-        table.[x_hash] <-key_pair :: table.[x_hash]
+    with
+        | :? System.Collections.Generic.KeyNotFoundException -> table.[x_hash] <-key_pair :: table.[x_hash]
     
 
 
