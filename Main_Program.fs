@@ -89,4 +89,7 @@ for keypair in stream do
 //Get second moment
 printfn "second moment: %A" (BCS_2nd_moment C_array)
 
+//create alot of random numbers  
+let obj_random = new Random()
 
+//let red, green, blue = objrandom.Next(256), objrandom.Next(256), objrandom.Next(256)
