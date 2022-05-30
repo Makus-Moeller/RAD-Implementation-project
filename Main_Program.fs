@@ -1,5 +1,4 @@
 ﻿module Main
-
 open Stream
 open Task1
 open Task2 
@@ -14,7 +13,7 @@ let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
 //l Should always be less than 32
-let l : int = 31
+let l : int = 15
 
 //Make stream, assert  n > 2^l
 let stream = createStream 3000 l
@@ -49,30 +48,7 @@ let mutable hashtable_mulshift = create_hashtable l
 let mutable hashtable_modPrime = create_hashtable l
 
 //Insert values in hashtable with Multiply_shift 
-for pair in stream do
-    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
 
-//get Squared sum Multiply_shift
-let mutable kvadratsum_modPrime = 0
-let mutable kvadratsum_mulShift  = 0
-for pair in stream do
-    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
-    let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
-    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value * d_value)
-printfn("fst  %i") kvadratsum_mulShift
-
-
-//Insert values in hashtable with mod_prime 
-    
-
-//get Squared sum Multiply_shift
-
-
-printfn("snd %i") kvadratsum_modPrime
-
-//Task 2
 
 //Initialize coefficients
 let a0 : bigint = 117853593111058875688543295I
@@ -84,14 +60,30 @@ let coeff_lst = [|a0;a1;a2;a3|]
 //Initialize counter array
 let C_array = BCS_Init 128
 
-//Process every keypair
-for keypair in stream do 
-    BCS_pocess keypair C_array g coeff_lst prime_p
+//get Squared sum Multiply_shift
+let mutable kvadratsum_modPrime = 0
+let mutable kvadratsum_mulShift  = 0
+let mutable pair_list = []
+for pair in stream do
+    pair_list <- pair :: pair_list
+    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
+    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
+    
 
-//Get second moment
+
+for pair in pair_list do
+    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
+    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
+    
+    
+    let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
+    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value * d_value)
+    
+    //Get second moment
+    BCS_pocess pair C_array g coeff_lst prime_p
+printfn("fst  %i") kvadratsum_mulShift
+printfn("snd %i") kvadratsum_modPrime
 printfn "second moment: %A" (BCS_2nd_moment C_array)
 
-//create alot of random numbers  
-let obj_random = new Random()
-
-//let red, green, blue = objrandom.Next(256), objrandom.Next(256), objrandom.Next(256)
+//Task 2
+    
