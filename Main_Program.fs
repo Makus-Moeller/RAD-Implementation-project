@@ -50,23 +50,23 @@ let mutable hashtable_modPrime = create_hashtable l
 
 //Insert values in hashtable with Multiply_shift 
 for pair in stream do
-    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
 
 //get Squared sum Multiply_shift
 let mutable kvadratsum_mulShift  = 0
 for pair in stream do
-    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
     kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
 printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
 
 //Insert values in hashtable with mod_prime 
 for pair in stream do
-    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
 
 //get Squared sum Multiply_shift
 let mutable kvadratsum_modPrime = 0
 for pair in stream do
-    let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
     kvadratsum_modPrime <- kvadratsum_modPrime + (d_value * d_value)
 printfn "Squared sum mod prime: %A" kvadratsum_modPrime
 
