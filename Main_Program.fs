@@ -1,5 +1,6 @@
 ﻿module Main
 
+open Rand_array
 open Stream
 open Task1
 open Task2 
@@ -14,7 +15,7 @@ let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
 //l Should always be less than 64
-let l : int = 11 
+let l : int = 13
 
 //Make stream, assert  n > 2^l
 let stream = createStream 3000 l
@@ -48,27 +49,9 @@ printfn "sum_mod_prime: %A" sum_mod_prime
 let mutable hashtable_mulshift = create_hashtable l
 let mutable hashtable_modPrime = create_hashtable l
 
-//Insert values in hashtable with Multiply_shift 
-for pair in stream do
-    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
-
 //get Squared sum Multiply_shift
 let mutable kvadratsum_mulShift  = 0
-for pair in stream do
-    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
-    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
-printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
-
-//Insert values in hashtable with mod_prime 
-for pair in stream do
-    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
-
-//get Squared sum Multiply_shift
 let mutable kvadratsum_modPrime = 0
-for pair in stream do
-    let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
-    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value * d_value)
-printfn "Squared sum mod prime: %A" kvadratsum_modPrime
 
 //Task 2
 
@@ -82,14 +65,29 @@ let coeff_lst = [|a0;a1;a2;a3|]
 //Initialize counter array
 let C_array = BCS_Init 128
 
-//Process every keypair
-for keypair in stream do 
-    BCS_pocess keypair C_array g coeff_lst prime_p
+//Process every keypair, every stream is differenr and must be 
+for pair in stream do
+    //Insert values in hashtable with Multiply_shift
+    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+
+    //Squared sum with mulshift 
+    let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
+    
+    //Squared sum with 
+    let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value_modPrime * d_value_modPrime)
+
+    //Count sketch of stream
+    BCS_pocess pair C_array g coeff_lst prime_p
+
+//Print squared sum 
+printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
+printfn "Squared sum mod prime: %A" kvadratsum_modPrime 
 
 //Get second moment
-printfn "second moment: %A" (BCS_2nd_moment C_array)
+printfn "Second moment Count sketch: %A" (BCS_2nd_moment C_array)
 
 //create alot of random numbers  
-let obj_random = new Random()
-
-//let red, green, blue = objrandom.Next(256), objrandom.Next(256), objrandom.Next(256)
+printfn "%A" random_array[0]

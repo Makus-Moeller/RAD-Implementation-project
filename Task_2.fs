@@ -9,8 +9,8 @@ let g (x : uint64) (coefficients: bigint array) (prime_p : bigint) : bigint  =
     for i = 2 to q do
         y <- y * bigint x + coefficients[q-i]
         y <- (y&&&prime_p) + (y>>>89)
-        if y >= prime_p then
-            y <- y-prime_p
+    if y >= prime_p then
+        y <- y-prime_p
     y 
 
 //k=m in the assignment text. Input t is the exponent to decide k  opgavebeskrivelsen.
