@@ -3,7 +3,7 @@ open System
 exception InnerError of string
 type Hash_Table = array<list<uint64*int>>
 type KEYPAIR = uint64*int
-let prime_p : bigint = (bigint 2<<<89)-bigint 1
+let prime_p : bigint = (bigint 1<<<89)-bigint 1
 
 
 let calculate_l (table_Length:int) : int = 
@@ -43,12 +43,12 @@ let create_hashtable (l: int) : Hash_Table =
 type Hashfunction = Multiply_mod_prime | Multiply_shift
 
 //Set key
-let set_value (key_pair :KEYPAIR) (hashfunction : Hashfunction)  (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (a_shift: uint64) : unit =
+let set_value (key_pair : KEYPAIR) (hashfunction : Hashfunction)  (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : unit =
     let mutable x, d = key_pair
     let mutable hashvalue = 0
     let mutable l = calculate_l hashtable.Length
     match hashfunction with 
-        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l prime_p
+        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
     
     let mutable new_lst = List.map (fun a -> if (fst a)=x then (x,d) else a) hashtable[hashvalue]

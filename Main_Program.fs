@@ -15,10 +15,10 @@ let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
 //l Should always be less than 64
-let l : int = 13
+let l : int = 23
 
 //Make stream, assert  n > 2^l
-let stream = createStream 3000 l
+let stream = createStream 10000 l
 
 //Counters for sum of hashvalues
 let mutable sum_multiply_shift : int = 0
@@ -29,16 +29,16 @@ let watch_mulshift = System.Diagnostics.Stopwatch.StartNew()
 for i in stream do  
     sum_multiply_shift <- sum_multiply_shift + multiply_shift_hashing (fst i) a_mulshift l   
 watch_mulshift.Stop()
-printfn "Time mulshift hashing: %f" watch_mulshift.Elapsed.TotalMilliseconds
+//printfn "Time mulshift hashing: %f" watch_mulshift.Elapsed.TotalMilliseconds
 
 let watch_modPrime = System.Diagnostics.Stopwatch.StartNew()
 for i in stream do     
     sum_mod_prime <- sum_mod_prime + multiply_mod_prime (fst i) a_bigint b_bigint l prime_p
 watch_modPrime.Stop()
-printfn "Time modprime hashing: %f" watch_modPrime.Elapsed.TotalMilliseconds
+//printfn "Time modprime hashing: %f" watch_modPrime.Elapsed.TotalMilliseconds
 
-printfn "sum_mutilply_shift: %A" sum_multiply_shift
-printfn "sum_mod_prime: %A" sum_mod_prime
+//printfn "sum_mutilply_shift: %A" sum_multiply_shift
+//printfn "sum_mod_prime: %A" sum_mod_prime
 
 //Exercise 2
 //Watch code in Task1.fs
@@ -64,29 +64,39 @@ let coeff_lst = [|a0;a1;a2;a3|]
 //Initialize counter array
 let C_array = BCS_Init 128
 
+let mutable copy_of_stream = []
 //Process every keypair, every stream is differenr and must be 
 for pair in stream do
     //Insert values in hashtable with Multiply_shift
     increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
     increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
+    copy_of_stream <- pair :: copy_of_stream
 
-    //Squared sum with mulshift 
+for pair in copy_of_stream do
     let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
     kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
     
     //Squared sum with 
     let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
     kvadratsum_modPrime <- kvadratsum_modPrime + (d_value_modPrime * d_value_modPrime)
-
-    //Count sketch of stream
     BCS_pocess pair C_array g coeff_lst prime_p
 
 //Print squared sum 
 printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
 printfn "Squared sum mod prime: %A" kvadratsum_modPrime 
 
-//Get second moment
-printfn "Second moment Count sketch: %A" (BCS_2nd_moment C_array)
+let new_randoms =  Array.map (fun x -> (x&&&prime_p) + (x>>>89)) random_array
 
-//create alot of random numbers  
-printfn "%A" random_array[0]
+//create alot of random numbers
+let mutable all_tries = []
+let Median_method () : unit= 
+    for i in 0..99 do
+        let C_array = BCS_Init 128
+        for k in copy_of_stream do
+            BCS_pocess k C_array g (random_array[i*4..i*4+3]) prime_p
+        let temp_val = BCS_2nd_moment C_array
+        all_tries <-  temp_val :: all_tries
+        ()
+
+Median_method ()
+printfn("%A") all_tries

@@ -1,4 +1,5 @@
 module Task2
+open Task1
 open Stream
 open System
 
@@ -33,8 +34,8 @@ let BCS_Init (k: int) : int array =
 
 let BCS_pocess (key_pair : (uint64*int)) (c_array : int array) (g : uint64 -> bigint array -> bigint -> bigint) (coefficients: bigint array) (prime_p: bigint) : unit =
     let mutable x, d = key_pair
-    let t = Math.Log(float(c_array.Length), 2.0) 
-    let tuple_h_s = computation_h_and_s x g (int t) coefficients prime_p
+    let t = calculate_l c_array.Length
+    let tuple_h_s = computation_h_and_s x g t coefficients prime_p
     c_array[fst tuple_h_s] <- c_array[fst tuple_h_s] + (snd tuple_h_s) * d
 
 let BCS_2nd_moment (c_array : int array) : int = 
