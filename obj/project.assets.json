@@ -118,11 +118,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+      "projectUniqueName": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
       "projectName": "Implementation_Project",
-      "projectPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+      "projectPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
       "packagesPath": "C:\\Users\\Markus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\rad\\Implementation_Project\\RAD-Implementation-project\\obj\\",
+      "outputPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Markus\\AppData\\Roaming\\NuGet\\NuGet.Config"

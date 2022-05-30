@@ -53,7 +53,6 @@ let mutable hashtable_modPrime = create_hashtable l
 let mutable kvadratsum_mulShift  = 0
 let mutable kvadratsum_modPrime = 0
 
-//Task 2
 
 //Initialize coefficients
 let a0 : bigint = 117853593111058875688543295I
@@ -68,15 +67,15 @@ let C_array = BCS_Init 128
 //Process every keypair, every stream is differenr and must be 
 for pair in stream do
     //Insert values in hashtable with Multiply_shift
-    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
-    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
+    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
 
     //Squared sum with mulshift 
-    let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
     kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
     
     //Squared sum with 
-    let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
     kvadratsum_modPrime <- kvadratsum_modPrime + (d_value_modPrime * d_value_modPrime)
 
     //Count sketch of stream

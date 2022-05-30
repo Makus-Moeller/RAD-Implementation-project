@@ -1,6 +1,18 @@
 module Task1
 open System 
 exception InnerError of string
+type Hash_Table = array<list<uint64*int>>
+type KEYPAIR = uint64*int
+let prime_p : bigint = (bigint 2<<<89)-bigint 1
+
+
+let calculate_l (table_Length:int) : int = 
+    let mutable l = 0
+    let mutable length = table_Length
+    while length <> 1 do
+        length <- (length>>>1)
+        l <- l + 1
+    l
 
 //Creates uneven number
 let unevenize (numb : uint64) : uint64 = 
@@ -24,19 +36,19 @@ let  multiply_mod_prime (x:uint64) (a: bigint) (b: bigint) (l: int32) (p: bigint
             int (y % power_l)
 
 //Function for creating hashtable with size 2^l
-let create_hashtable (l: int)  : array<list<uint64*int>> = 
+let create_hashtable (l: int) : Hash_Table = 
     Array.create (1<<<l) List.Empty
 
 //define types which can be passed as arguments
 type Hashfunction = Multiply_mod_prime | Multiply_shift
 
 //Set key
-let set_value (key_pair : (uint64*int)) (hashfunction : Hashfunction)  (hashtable: array<list<uint64*int>>) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : unit =
+let set_value (key_pair :KEYPAIR) (hashfunction : Hashfunction)  (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (a_shift: uint64) : unit =
     let mutable x, d = key_pair
     let mutable hashvalue = 0
-
+    let mutable l = calculate_l hashtable.Length
     match hashfunction with 
-        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p 
+        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l prime_p
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
     
     let mutable new_lst = List.map (fun a -> if (fst a)=x then (x,d) else a) hashtable[hashvalue]
@@ -45,12 +57,12 @@ let set_value (key_pair : (uint64*int)) (hashfunction : Hashfunction)  (hashtabl
     hashtable[hashvalue] <- new_lst 
 
 //Increment value
-let increment_value (key_pair : (uint64*int)) (hashfunction : Hashfunction) (hashtable: array<list<uint64*int>>) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : unit =
+let increment_value (key_pair : KEYPAIR) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : unit =
     let mutable x, d = key_pair
     let mutable hashvalue = 0
-    
+    let mutable l = calculate_l hashtable.Length
     match hashfunction with 
-        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p 
+        Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
 
     let mutable new_lst = List.map (fun a -> if (fst a)=x then (x,d+snd(a)) else a) hashtable[hashvalue]
@@ -59,15 +71,14 @@ let increment_value (key_pair : (uint64*int)) (hashfunction : Hashfunction) (has
     hashtable[hashvalue] <- new_lst 
 
 //Get value 
-let get_value (x : uint64) (hashfunction : Hashfunction) (hashtable: array<list<uint64*int>>) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : int =
+let get_value (x : uint64) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : int =
     let mutable hashvalue = 0 
     let mutable ret_val = 0
-
+    let mutable l = calculate_l hashtable.Length
     match hashfunction with 
         Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
-
-    for (a,y) in hashtable[hashvalue] do
-        if a=x then  
-            ret_val <- y
-    ret_val
+    try 
+        List.find (fun y -> fst y = x) hashtable.[hashvalue] |> snd
+    with 
+        | :? System.Collections.Generic.KeyNotFoundException -> 0
