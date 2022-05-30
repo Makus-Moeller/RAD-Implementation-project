@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj": {}
+    "C:\\Users\\JHK\\Desktop\\Datalogi\\RAD\\RAD-Implementation-project\\Implementation_Project.fsproj": {}
   },
   "projects": {
-    "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj": {
+    "C:\\Users\\JHK\\Desktop\\Datalogi\\RAD\\RAD-Implementation-project\\Implementation_Project.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
+        "projectUniqueName": "C:\\Users\\JHK\\Desktop\\Datalogi\\RAD\\RAD-Implementation-project\\Implementation_Project.fsproj",
         "projectName": "Implementation_Project",
-        "projectPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\Implementation_Project.fsproj",
-        "packagesPath": "C:\\Users\\Markus\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Markus\\OneDrive\\Dokumenter\\4. Semester\\RAD\\Implementation_Project\\RAD-Implementation-project\\obj\\",
+        "projectPath": "C:\\Users\\JHK\\Desktop\\Datalogi\\RAD\\RAD-Implementation-project\\Implementation_Project.fsproj",
+        "packagesPath": "C:\\Users\\JHK\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\JHK\\Desktop\\Datalogi\\RAD\\RAD-Implementation-project\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Markus\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\JHK\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\sdk\\6.0.300\\FSharp\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
