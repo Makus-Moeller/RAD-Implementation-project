@@ -13,8 +13,8 @@ let prime_p : bigint = (bigint 1<<<89)-bigint 1
 let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
-//l Should always be less than 64
-let l : int = 11 
+//l Should always be less than 32
+let l : int = 31
 
 //Make stream, assert  n > 2^l
 let stream = createStream 3000 l
@@ -51,24 +51,26 @@ let mutable hashtable_modPrime = create_hashtable l
 //Insert values in hashtable with Multiply_shift 
 for pair in stream do
     increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-
-//get Squared sum Multiply_shift
-let mutable kvadratsum_mulShift  = 0
-for pair in stream do
-    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
-printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
-
-//Insert values in hashtable with mod_prime 
-for pair in stream do
     increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
 
 //get Squared sum Multiply_shift
 let mutable kvadratsum_modPrime = 0
+let mutable kvadratsum_mulShift  = 0
 for pair in stream do
+    let d_value = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
+    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value * d_value)
     let d_value = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
     kvadratsum_modPrime <- kvadratsum_modPrime + (d_value * d_value)
-printfn "Squared sum mod prime: %A" kvadratsum_modPrime
+printfn("fst  %i") kvadratsum_mulShift
+
+
+//Insert values in hashtable with mod_prime 
+    
+
+//get Squared sum Multiply_shift
+
+
+printfn("snd %i") kvadratsum_modPrime
 
 //Task 2
 
