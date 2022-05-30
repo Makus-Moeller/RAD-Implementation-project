@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Stream_generator.fs" />
+    <Compile Include="Task_1.fs" />
+    <Compile Include="Task_2.fs" />
     <Compile Include="Main_Program.fs" />
   </ItemGroup>
 
