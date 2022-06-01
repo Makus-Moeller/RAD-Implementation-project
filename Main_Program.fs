@@ -64,11 +64,7 @@ for i in new_l..22 do
         let mutable hashtable_mulshift_new = create_hashtable i
         let mutable hashtable_modPrime_new = create_hashtable i
         for pair in stream_new do
-        //Insert values in hashtable with Multiply_shift
-            increment_value pair Multiply_shift hashtable_mulshift_new a_bigint b_bigint prime_p a_mulshift
-            increment_value pair Multiply_mod_prime hashtable_modPrime_new a_bigint b_bigint prime_p a_mulshift
             copy_new_stream <- pair :: copy_new_stream
-        
         
         
         let x_new, y = List.unzip(copy_new_stream)
@@ -77,21 +73,26 @@ for i in new_l..22 do
         let mutable kvadratsum_modPrime_new : int = 0
         
         let watch_mulshift = System.Diagnostics.Stopwatch.StartNew()
+        for pair in copy_new_stream do
+        //Insert values in hashtable with Multiply_shift
+            increment_value pair Multiply_shift hashtable_mulshift_new a_bigint b_bigint prime_p a_mulshift
+    
         for pair in distinct_stream_new do
             let d_value_shift = get_value pair Multiply_shift hashtable_mulshift_new a_bigint b_bigint prime_p a_mulshift
             kvadratsum_mulShift_new <- kvadratsum_mulShift_new + (d_value_shift * d_value_shift)
+        let mulshift_time :float = watch_mulshift.Elapsed.TotalMilliseconds
         watch_mulshift.Stop()
-        let mulshift_time :int64 = watch_mulshift.Elapsed.Ticks
+
 
         let watch_mod_prime = System.Diagnostics.Stopwatch.StartNew()
+        for pair in copy_new_stream do
+            increment_value pair Multiply_mod_prime hashtable_modPrime_new a_bigint b_bigint prime_p a_mulshift
         for pair in distinct_stream_new do    
             let d_value_modPrime = get_value pair Multiply_mod_prime hashtable_modPrime_new a_bigint b_bigint prime_p a_mulshift
             kvadratsum_modPrime_new <- kvadratsum_modPrime_new + (d_value_modPrime * d_value_modPrime)
         watch_mod_prime.Stop()
-
-        let watch_mod_prime_time : int64 = watch_mod_prime.Elapsed.Ticks
-
-        printfn "L: %i   mulshift_time: %i    modprime: %i   factor %f" i mulshift_time watch_mod_prime_time (float mulshift_time/float watch_mod_prime_time)
+        let watch_mod_prime_time : float = watch_mod_prime.Elapsed.TotalMilliseconds
+        printfn "L: %i   mulshift_time: %f    modprime: %f   factor %f" i mulshift_time watch_mod_prime_time (float mulshift_time/float watch_mod_prime_time)
 
 (*
 
