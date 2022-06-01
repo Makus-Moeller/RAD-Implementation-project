@@ -15,10 +15,10 @@ let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
 //l Should always be less than 64
-let l : int = 23
+let l : int = 3
 
 //Make stream, assert  n > 2^l
-let stream = createStream 10000 l
+let stream = createStream 20 l
 
 //Counters for sum of hashvalues
 let mutable sum_multiply_shift : int = 0
@@ -72,7 +72,9 @@ for pair in stream do
     increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
     copy_of_stream <- pair :: copy_of_stream
 
-for pair in copy_of_stream do
+
+let distinct_stream = copy_of_stream |> Seq.distinct |> List.ofSeq
+for pair in distinct_stream do
     let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
     kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
     
@@ -85,16 +87,16 @@ for pair in copy_of_stream do
 printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
 printfn "Squared sum mod prime: %A" kvadratsum_modPrime 
 
-let new_randoms =  Array.map (fun x -> (x&&&prime_p) + (x>>>89)) random_array
+
 
 //create alot of random numbers
 let mutable all_tries = []
 let Median_method () : unit= 
     for i in 0..99 do
-        let C_array = BCS_Init 128
+        let C_array_new = BCS_Init 128
         for k in copy_of_stream do
-            BCS_pocess k C_array g (random_array[i*4..i*4+3]) prime_p
-        let temp_val = BCS_2nd_moment C_array
+            BCS_pocess k C_array_new g (random_array[i*4..i*4+3]) prime_p
+        let temp_val = BCS_2nd_moment C_array_new
         all_tries <-  temp_val :: all_tries
         ()
 
