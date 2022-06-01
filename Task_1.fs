@@ -77,7 +77,7 @@ let increment_value (key_pair : KEYPAIR) (hashfunction : Hashfunction) (hashtabl
     
 
 //Get value 
-let get_value (x : uint64) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : int =
+let get_value (x : uint64) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : int =
     let mutable hashvalue = 0 
     let mutable ret_val = 0
 

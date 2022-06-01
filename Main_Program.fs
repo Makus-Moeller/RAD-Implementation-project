@@ -20,15 +20,17 @@ let l : int = 12
 //Make stream, assert  n > 2^l
 let stream = createStream 6000 l
 
+
 //Counters for sum of hashvalues
 let mutable sum_multiply_shift : int = 0
 let mutable sum_mod_prime : int = 0
-
+let mutable stream_copy = []
 //Take time of stream processing
 
 let watch_mulshift = System.Diagnostics.Stopwatch.StartNew()
 for i in stream do  
     sum_multiply_shift <- sum_multiply_shift + multiply_shift_hashing (fst i) a_mulshift l   
+    stream_copy <- i :: stream_copy 
 watch_mulshift.Stop()
 printfn "Time mulshift hashing: %f ms." watch_mulshift.Elapsed.TotalMilliseconds
 printfn "sum_mutilply_shift: %A" sum_multiply_shift
