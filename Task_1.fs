@@ -7,6 +7,15 @@ type Hash_Table = array<list<uint64*int>>
 type KEYPAIR = (uint64*int)
 type Hashfunction = Multiply_mod_prime | Multiply_shift
 
+//Calculate l value
+let calculate_l (table_Length:int) : int = 
+    let mutable l = 0
+    let mutable length = table_Length
+    while length <> 1 do
+        length <- (length>>>1)
+        l <- l + 1
+    l
+
 //Creates uneven number
 let unevenize (numb : uint64) : uint64 = 
     uint64(numb) ||| uint64(1)
@@ -34,24 +43,29 @@ let create_hashtable (l: int)  : Hash_Table =
 
 
 //Set key
-let set_value (key_pair : KEYPAIR) (hashfunction : Hashfunction)  (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : unit =
+let set_value (key_pair : KEYPAIR) (hashfunction : Hashfunction)  (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : unit =
+    
     let mutable x, d = key_pair
     let mutable hashvalue = 0
+    let mutable l = calculate_l hashtable.Length
 
     match hashfunction with 
         Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p 
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
     
     let mutable new_lst = List.map (fun a -> if (fst a)=x then (x,d) else a) hashtable[hashvalue]
+    
     if hashtable[hashvalue] = new_lst then
         new_lst <- (x,d) :: new_lst
     hashtable[hashvalue] <- new_lst 
 
 //Increment value
-let increment_value (key_pair : KEYPAIR) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : unit =
+let increment_value (key_pair : KEYPAIR) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (p: bigint) (a_shift: uint64) : unit =
+    
     let mutable x, d = key_pair
     let mutable hashvalue = 0
-    
+    let mutable l = calculate_l hashtable.Length
+
     match hashfunction with 
         Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p 
         | Multiply_shift -> hashvalue <- multiply_shift_hashing x a_shift l 
@@ -59,12 +73,15 @@ let increment_value (key_pair : KEYPAIR) (hashfunction : Hashfunction) (hashtabl
     let mutable new_lst = List.map (fun a -> if (fst a)=x then (x,d+snd(a)) else a) hashtable[hashvalue]
     if hashtable[hashvalue] = new_lst then
         new_lst <- (x,d) :: new_lst
-    hashtable[hashvalue] <- new_lst 
+    hashtable[hashvalue] <- new_lst
+    
 
 //Get value 
 let get_value (x : uint64) (hashfunction : Hashfunction) (hashtable: Hash_Table) (a_mod: bigint) (b: bigint) (l: int) (p: bigint) (a_shift: uint64) : int =
     let mutable hashvalue = 0 
     let mutable ret_val = 0
+
+    let mutable l = calculate_l hashtable.Length
 
     match hashfunction with 
         Multiply_mod_prime -> hashvalue <- multiply_mod_prime x a_mod b l p
