@@ -1,6 +1,9 @@
 module Task2
+
 open Stream
 open System
+open Task1
+
 
 //g functions: maps key uniform in range [1..p]
 let g (x : uint64) (coefficients: bigint array) (prime_p : bigint) : bigint  =
@@ -31,11 +34,11 @@ let BCS_Init (k: int) : int array =
     let mutable C : int array = Array.zeroCreate k
     C
 
-let BCS_pocess (key_pair : (uint64*int)) (c_array : int array) (g : uint64 -> bigint array -> bigint -> bigint) (coefficients: bigint array) (prime_p: bigint) : unit =
+let BCS_Process (key_pair : KEYPAIR) (c_array : int array) (g : uint64 -> bigint array -> bigint -> bigint) (coefficients: bigint array) (prime_p: bigint) : unit =
     let mutable x, d = key_pair
     let t = Math.Log(float(c_array.Length), 2.0) 
     let tuple_h_s = computation_h_and_s x g (int t) coefficients prime_p
-    c_array[fst tuple_h_s] <- c_array[fst tuple_h_s] + (snd tuple_h_s) * d
+    c_array[fst tuple_h_s] <- c_array[fst tuple_h_s] + ((snd tuple_h_s) * d)
 
 let BCS_2nd_moment (c_array : int array) : int = 
     let mutable counter = 0 

@@ -15,10 +15,10 @@ let a_bigint : bigint = 65582665042094216432365251I
 let b_bigint : bigint = 105704395269750626696406447I
 let a_mulshift : uint64 = 4196704446715454703UL
 //l Should always be less than 64
-let l : int = 13
+let l : int = 3
 
 //Make stream, assert  n > 2^l
-let stream = createStream 3000 l
+let stream = createStream 20 l
 
 //Counters for sum of hashvalues
 let mutable sum_multiply_shift : int = 0
@@ -37,8 +37,8 @@ for i in stream do
 watch_modPrime.Stop()
 printfn "Time modprime hashing: %f" watch_modPrime.Elapsed.TotalMilliseconds
 
-printfn "sum_mutilply_shift: %A" sum_multiply_shift
-printfn "sum_mod_prime: %A" sum_mod_prime
+//printfn "sum_mutilply_shift: %A" sum_multiply_shift
+//printfn "sum_mod_prime: %A" sum_mod_prime
 
 //Exercise 2
 //Watch code in Task1.fs
@@ -49,9 +49,38 @@ printfn "sum_mod_prime: %A" sum_mod_prime
 let mutable hashtable_mulshift = create_hashtable l
 let mutable hashtable_modPrime = create_hashtable l
 
+ 
+//Process every keypair, every stream is differenr and must be
+let mutable stream_copy = [] 
+
+for pair in stream do
+    //Insert values in hashtables 
+    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    stream_copy <- pair :: stream_copy
+
+//Reverse stream such that it is in correct order
+stream_copy <- List.rev stream_copy 
+printfn "%A" stream_copy
+
 //get Squared sum Multiply_shift
 let mutable kvadratsum_mulShift  = 0
 let mutable kvadratsum_modPrime = 0
+
+let unique_keys = stream_copy |> Seq.distinct |> List.ofSeq
+
+for pair in unique_keys do
+    //Squared sum with mulshift 
+    let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint l prime_p a_mulshift
+    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
+    
+    //Squared sum with 
+    let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint l prime_p a_mulshift
+    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value_modPrime * d_value_modPrime)
+
+//Print squared sum 
+printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
+printfn "Squared sum mod prime: %A" kvadratsum_modPrime 
 
 
 //Initialize coefficients
@@ -60,33 +89,41 @@ let a1 : bigint = 33859604520461393499784185I
 let a2 : bigint = 458413945876887069982739372180473I
 let a3 : bigint = 18801263508795393760483242194398798939129I
 let coeff_lst = [|a0;a1;a2;a3|]
- 
+
+//Define k value. Precision of count sketch
+let k = 128
+
 //Initialize counter array
-let C_array = BCS_Init 128
+let C_array_test = BCS_Init k
 
-//Process every keypair, every stream is differenr and must be 
-for pair in stream do
-    //Insert values in hashtable with Multiply_shift
-    increment_value pair Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-    increment_value pair Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
-
-    //Squared sum with mulshift 
-    let d_value_shift = get_value (fst pair) Multiply_shift hashtable_mulshift a_bigint b_bigint prime_p a_mulshift
-    kvadratsum_mulShift <- kvadratsum_mulShift + (d_value_shift * d_value_shift)
-    
-    //Squared sum with 
-    let d_value_modPrime = get_value (fst pair) Multiply_mod_prime hashtable_modPrime a_bigint b_bigint prime_p a_mulshift
-    kvadratsum_modPrime <- kvadratsum_modPrime + (d_value_modPrime * d_value_modPrime)
-
+for pair in stream_copy do
     //Count sketch of stream
-    BCS_pocess pair C_array g coeff_lst prime_p
-
-//Print squared sum 
-printfn "Squared sum multiply shift: %A" kvadratsum_mulShift
-printfn "Squared sum mod prime: %A" kvadratsum_modPrime 
+    BCS_Process pair C_array_test g coeff_lst prime_p
 
 //Get second moment
-printfn "Second moment Count sketch: %A" (BCS_2nd_moment C_array)
+printfn "Second moment Count sketch: %A" (BCS_2nd_moment C_array_test)
 
-//create alot of random numbers  
-printfn "%A" random_array[0]
+//remember to map through every element and take mod p
+random_array <- Array.map (fun x -> (x&&&prime_p) + (x>>>89)) random_array
+
+let mutable result_lst = [] 
+
+for i in 0..99 do
+    let C_array = BCS_Init k
+    for keypair in stream_copy do
+        BCS_Process keypair C_array g random_array[i*4..i*4+3] prime_p
+    result_lst <- (BCS_2nd_moment C_array) :: result_lst
+
+printfn "Count sketch list: %A" result_lst
+printfn "Length: %A" result_lst.Length
+
+let mutable groups : int list list = []
+
+for i in 0..8 do
+    let mutable group = result_lst[i*11..(i*11)+10]
+    let sorted_lst = List.sort group
+    groups <- sorted_lst :: groups 
+
+//printfn "Sorted groups: %A" groups 
+
+let mutable hashtable_test = create_hashtable l
